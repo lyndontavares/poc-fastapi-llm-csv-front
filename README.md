@@ -42,3 +42,11 @@ Ao final de suas atividades, vocês devem gerar um relatório descrevendo:
 5.Não se esqueçam de ocultar chaves utilizadas nos softwares.
 
 Importante! Não queremos que vocês obtenham as respostas de forma manual utilizando alguma LLM como o ChatGPT. Queremos que o(s) seu(s) agente(s) executem esta tarefa.
+
+## Teste 
+
+<div align="center">
+
+![](assets/tela1.png) 
+
+</div>

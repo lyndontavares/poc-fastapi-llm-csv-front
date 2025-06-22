@@ -1,54 +1,42 @@
-# React + TypeScript + Vite
+# poc-fastapi-llm-csv-front
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+POC Frontend React para integração com API Fastapi Gemini usando LangChain CSV
 
-Currently, two official plugins are available:
+## Objetivo da Atividade
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A atividade tem por objetivo criar um ou mais agentes que tornem possível a um usuário realizar perguntas sobre os arquivos CSV disponibilizados.
 
-## Expanding the ESLint configuration
+Por exemplo:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Qual é o fornecedor que teve maior montante recebido? 
+- Qual item teve maior volume entregue (em quantidade)? E assim por diante.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Faça upload do arquivo: 202401_NFs.zip e envie ao chatbot.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## O que deve ser feito
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+A solução entregue deverá ter uma interface onde o usuário irá informar sua pergunta e o agente irá gerar a resposta desejada.
+Para tanto, o agente deverá descompactar os arquivos, selecionar o arquivo desejado, carregar os dados e fazer as queries e gerar a resposta para o usuário.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Para construir seus agentes, vocês podem optar por escrever programas em Python ou utilizar ferramentas NoCode/LowCode.
+Sugerimos os seguintes frameworks/ferramentas:
+
+-https://autogenhub.github.io/autogen/
+-https://ai.pydantic.dev/
+-https://www.langchain.com/
+-https://www.llamaindex.ai/
+-https://www.crewai.com/
+-https://n8n.io/
+-https://www.langflow.org/
+
+Vocês devem usar pelo menos 1 dos frameworks/ferramentas sugeridos.
+
+Ao final de suas atividades, vocês devem gerar um relatório descrevendo:
+
+1.A framework escolhida
+2.Como a solução foi estruturada
+3.Pelo menos 4 perguntas com as respectivas respostas.
+4.Link para a pasta do Github contendo os códigos fonte ou um link para acessar seu agente.
+5.Não se esqueçam de ocultar chaves utilizadas nos softwares.
+
+Importante! Não queremos que vocês obtenham as respostas de forma manual utilizando alguma LLM como o ChatGPT. Queremos que o(s) seu(s) agente(s) executem esta tarefa.

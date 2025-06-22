@@ -31,10 +31,11 @@ import PFIconLogoColor from '/PF-IconLogo-Color.svg';
 import PFIconLogoReverse from '/PF-IconLogo-Reverse.svg';
 import userAvatar from '/user_avatar.svg';
 import patternflyAvatar from '/patternfly_avatar.svg';
-import { getTrackingProviders } from '@patternfly/chatbot/dist/dynamic/tracking';
+//import { getTrackingProviders } from '@patternfly/chatbot/dist/dynamic/tracking';
 //import { InitProps } from '@patternfly/chatbot/dist/dynamic/tracking';
 import '@patternfly/react-core/dist/styles/base.css';
 import '@patternfly/chatbot/dist/css/main.css';
+import React from 'react';
 
 const footnoteProps = {
   label: 'ChatBot uses AI. Check for mistakes.',
@@ -58,25 +59,13 @@ const footnoteProps = {
   }
 };
 
-const markdown = `A paragraph with *emphasis* and **strong importance**.
+const markdown = `Um parágrafo com *ênfase* e **forte importância**.
 
-> A block quote with ~strikethrough~ and a URL: https://reactjs.org.
+> Uma citação em bloco com ~riscado~ e uma URL: https://reactjs.org.
 
-Here is an inline code - \`() => void\`
+Exemplo de código em linha - \`() => void\`
 
-Here is some YAML code:
-
-~~~yaml
-apiVersion: helm.openshift.io/v1beta1/
-kind: HelmChartRepository
-metadata:
-  name: azure-sample-repo0oooo00ooo
-spec:
-  connectionConfig:
-  url: https://raw.githubusercontent.com/Azure-Samples/helm-charts/master/docs
-~~~
-
-Here is some JavaScript code:
+Um código em JavaScript:
 
 ~~~js
 const MessageLoading = () => (
@@ -114,12 +103,13 @@ const initProps: InitProps = {
 tracking.identify('user-123'); // , { superUser: true } TODO get real user id + properties
 tracking.trackPageView(window.location.href); */
 
-const actionEventName = 'MessageAction';
+//const actionEventName = 'MessageAction';
+
 const initialMessages: MessageProps[] = [
   {
     id: '1',
     role: 'user',
-    content: 'Hello, can you give me an example of what you can do?',
+    content: 'Olá, você pode me dar um exemplo do que você pode fazer?',
     name: 'User',
     avatar: userAvatar,
     timestamp: date.toLocaleString(),
@@ -154,37 +144,39 @@ const welcomePrompts = [
 ];
 
 const initialConversations = {
-  Today: [{ id: '1', text: 'Hello, can you give me an example of what you can do?' }],
-  'This month': [
+  Hoje: [{ id: '1', text: 'Olá, você pode me dar um exemplo do que você pode fazer?' }],
+  'Este mês': [
     {
       id: '2',
-      text: 'Enterprise Linux installation and setup'
+      text: 'Instalação e configuração do Enterprise Linux'
     },
-    { id: '3', text: 'Troubleshoot system crash' }
+    { id: '3', text: 'Solucionar falha do sistema' }
   ],
-  March: [
-    { id: '4', text: 'Ansible security and updates' },
-    { id: '5', text: 'Red Hat certification' },
-    { id: '6', text: 'Lightspeed user documentation' }
+  Março: [
+    { id: '4', text: 'Segurança e atualizações do Ansible' },
+    { id: '5', text: 'Certificação Red Hat' },
+    { id: '6', text: 'Documentação do usuário Lightspeed' }
   ],
-  February: [
-    { id: '7', text: 'Crashing pod assistance' },
-    { id: '8', text: 'OpenShift AI pipelines' },
-    { id: '9', text: 'Updating subscription plan' },
-    { id: '10', text: 'Red Hat licensing options' }
+  Fevereiro: [
+    { id: '7', text: 'Assistência com pod travando' },
+    { id: '8', text: 'Pipelines de OpenShift AI' },
+    { id: '9', text: 'Atualizando plano de assinatura' },
+    { id: '10', text: 'Opções de licenciamento Red Hat' }
   ],
-  January: [
-    { id: '11', text: 'RHEL system performance' },
-    { id: '12', text: 'Manage user accounts' }
+  Janeiro: [
+    { id: '11', text: 'Desempenho do sistema RHEL' },
+    { id: '12', text: 'Gerenciar contas de usuário' }
   ]
 };
 
-const actionEvent2 = 'ActionEvent2';
+//const actionEvent2 = 'ActionEvent2';
+
 export const ChatbotDemo3: FunctionComponent = () => {
+
   const [chatbotVisible, setChatbotVisible] = useState<boolean>(true);
   const [displayMode, setDisplayMode] = useState<ChatbotDisplayMode>(ChatbotDisplayMode.fullscreen);
-  const [messages, setMessages] = useState<MessageProps[]>(initialMessages);
-  const [selectedModel, setSelectedModel] = useState('Granite 7B');
+  const [messages, setMessages] = useState<MessageProps[]>(initialMessages); //initialMessages
+  const [selectedModel, setSelectedModel] = useState('Gemini Pro');
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [conversations, setConversations] = useState<Conversation[] | { [key: string]: Conversation[] }>(
@@ -196,6 +188,8 @@ export const ChatbotDemo3: FunctionComponent = () => {
   const chatbotRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<HTMLButtonElement>(null);
 
+  const [filesToUpload, setFilesToUpload] = useState([]);
+
   // Auto-scrolls to the latest message
   useEffect(() => {
     // don't scroll the first load - in this demo, we know we start with two messages
@@ -206,7 +200,7 @@ export const ChatbotDemo3: FunctionComponent = () => {
 
   const onSelectModel = (_event: MouseEvent<Element, MouseEvent> | undefined, value: string | number | undefined) => {
     setSelectedModel(value as string);
-    tracking.trackSingleItem('ModelSelected', { model: value });
+    //tracking.trackSingleItem('ModelSelected', { model: value });
   };
 
   const onSelectDisplayMode = (
@@ -222,9 +216,92 @@ export const ChatbotDemo3: FunctionComponent = () => {
     return id.toString();
   };
 
-  const handleSend = (message: string) => {
+  async function callAPI(message: string) {
+
+    if (filesToUpload.length > 0) {
+      return await fettchResponseCSV(message);
+    } else {
+      return await fettchResponse(message)
+    }
+  }
+
+  async function fettchResponse(message: string) {
+    //setLoading(true);
+    let retorno = '';
+    try {
+
+      const payload = JSON.stringify({ prompt: message });
+      const resposta = await fetch('http://127.0.0.1:8000/chat/gemini', {
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      if (!resposta.ok) {
+        throw new Error('Erro ao carregar JSON');
+      }
+      const json = await resposta.json();
+      console.log('Resposta do servidor:', json);
+
+      if (json['response'] !== undefined) {
+        retorno = json['response'];
+      }
+
+    } catch (erro) {
+      console.error('Erro:', erro);
+    } finally {
+      //setLoading(false);
+    }
+    return retorno
+  }
+
+
+  async function fettchResponseCSV(message: string) {
+    //setLoading(true);
+    let retorno = '';
+    try {
+
+
+      const payload = new FormData();
+      payload.append('file', filesToUpload[0]);
+      payload.append('question', message);
+
+      console.log('question:', message);
+      console.log('Files to upload:', filesToUpload[0]);
+
+      //const payload = JSON.stringify({ file: filesToUpload[0], question: message });
+
+      const resposta = await fetch('http://127.0.0.1:8000/upload_zip_and_query_with_pandas_agent', {
+        method: 'POST',
+        body: payload,
+      })
+
+      if (!resposta.ok) {
+        throw new Error('Erro ao carregar JSON');
+      }
+
+      setFilesToUpload([]);
+      const json = await resposta.json();
+      console.log('Resposta do servidor:', json);
+
+      if (json['answer'] !== undefined) {
+        retorno = json['answer'];
+      }
+
+    } catch (erro) {
+      console.error('Erro:', erro);
+    } finally {
+      //setLoading(false);
+    }
+    return retorno
+  }
+
+
+  async function handleSend(message: string) {
+
     setIsSendButtonDisabled(true);
-    tracking.trackSingleItem('UserInputReceived', { text: message });
+    //tracking.trackSingleItem('UserInputReceived', { text: message });
     const newMessages: MessageProps[] = [];
     // We can't use structuredClone since messages contains functions, but we can't mutate
     // items that are going into state or the UI won't update correctly
@@ -242,7 +319,8 @@ export const ChatbotDemo3: FunctionComponent = () => {
       avatarProps: { isBordered: true }
     });
 
-    //AKI
+    //Chamada para a API
+
 
     newMessages.push({
       id: generateId(),
@@ -253,40 +331,45 @@ export const ChatbotDemo3: FunctionComponent = () => {
       avatar: patternflyAvatar,
       timestamp: date.toLocaleString()
     });
+
+
+
     setMessages(newMessages);
     // make announcement to assistive devices that new messages have been added
     setAnnouncement(`Message from User: ${message}. Message from Bot is loading.`);
 
+
+    const resposta = await callAPI(message)
     // this is for demo purposes only; in a real situation, there would be an API response we would wait for
-    setTimeout(() => {
-      const loadedMessages: MessageProps[] = [];
-      // We can't use structuredClone since messages contains functions, but we can't mutate
-      // items that are going into state or the UI won't update correctly
-      newMessages.forEach((message) => loadedMessages.push(message));
-      loadedMessages.pop();
-      loadedMessages.push({
-        id: generateId(),
-        role: 'bot',
-        content: 'API response goes here',
-        name: 'Bot',
-        isLoading: false,
-        avatar: patternflyAvatar,
-        timestamp: date.toLocaleString(),
-        actions: {
-          positive: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Good response' }) },
-          negative: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Bad response' }) },
-          copy: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Copy' }) },
-          download: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Download' }) },
-          listen: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Listen' }) }
-        }
-      });
-      setMessages(loadedMessages);
-      // make announcement to assistive devices that new message has loaded
-      setAnnouncement(`Message from Bot: API response goes here`);
-      tracking.trackSingleItem('BotResponded', { undefined });
-      setIsSendButtonDisabled(false);
-    }, 5000);
+    //setTimeout(() => {
+    const loadedMessages: MessageProps[] = [];
+
+    newMessages.forEach((message) => loadedMessages.push(message));
+    loadedMessages.pop();
+    loadedMessages.push({
+      id: generateId(),
+      role: 'bot',
+      content: resposta,//'API response goes here',
+      name: 'Bot',
+      isLoading: false,
+      avatar: patternflyAvatar,
+      timestamp: date.toLocaleString(),
+      /* actions: {
+        positive: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Good response' }) },
+        negative: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Bad response' }) },
+        copy: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Copy' }) },
+        download: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Download' }) },
+        listen: { onClick: () => tracking.trackSingleItem(actionEvent2, { response: 'Listen' }) }
+      } */
+    });
+    setMessages(loadedMessages);
+    // make announcement to assistive devices that new message has loaded
+    setAnnouncement(`Message from Bot: API response goes here`);
+    //tracking.trackSingleItem('BotResponded', { undefined });
+    setIsSendButtonDisabled(false);
+    //}, 5000);
   };
+
 
   const findMatchingItems = (targetValue: string) => {
     let filteredConversations = Object.entries(initialConversations).reduce((acc, [key, items]) => {
@@ -345,6 +428,13 @@ export const ChatbotDemo3: FunctionComponent = () => {
     /* eslint-enable indent */
   };
 
+  function handleFileUpload(files) {
+    // This is where you would handle file uploads
+    // For this demo, we will just log the file to the console  
+    console.log(files);
+    setFilesToUpload(files);
+  }
+
   return (
     <>
       <SkipToContent onClick={handleSkipToContent} href="#">
@@ -355,7 +445,7 @@ export const ChatbotDemo3: FunctionComponent = () => {
         isChatbotVisible={chatbotVisible}
         onToggleChatbot={function () {
           setChatbotVisible(!chatbotVisible);
-          tracking.trackSingleItem('Chatbot Visible', { isVisible: !chatbotVisible }); // TODO correct?
+          //tracking.trackSingleItem('Chatbot Visible', { isVisible: !chatbotVisible }); // TODO correct?
         }}
         id="chatbot-toggle"
         ref={toggleRef}
@@ -405,8 +495,8 @@ export const ChatbotDemo3: FunctionComponent = () => {
                 <ChatbotHeaderActions>
                   <ChatbotHeaderSelectorDropdown value={selectedModel} onSelect={onSelectModel as any}>
                     <DropdownList>
-                      <DropdownItem value="Granite 7B" key="granite">
-                        Granite 7B
+                      <DropdownItem value="Gemini Pro" key="gemini">
+                        Gemini Pro
                       </DropdownItem>
                       <DropdownItem value="Llama 3.0" key="llama">
                         Llama 3.0
@@ -451,11 +541,12 @@ export const ChatbotDemo3: FunctionComponent = () => {
               <ChatbotContent>
                 {/* Update the announcement prop on MessageBox whenever a new message is sent
                  so that users of assistive devices receive sufficient context  */}
-                <MessageBox announcement={announcement}>
+                <MessageBox announcement={announcement} key='chatbot-message-box'>
                   <ChatbotWelcomePrompt
-                    title="Hi, ChatBot User!"
-                    description="How can I help you today?"
-                    prompts={welcomePrompts}
+                    key='chatbot-welcome-prompt'
+                    title="Bem-vindo ao ChatBot MetaMind!"
+                    description="I2A2 - Agentes Autonômicos Inteligentes"
+                    /* prompts={welcomePrompts} */
                   />
                   {/* This code block enables scrolling to the top of the last message.
                   You can instead choose to move the div with scrollToBottomRef on it below
@@ -466,8 +557,10 @@ export const ChatbotDemo3: FunctionComponent = () => {
                     if (index === messages.length - 1) {
                       return (
                         <>
-                          <div ref={scrollToBottomRef}></div>
-                          <Message key={message.id} {...message} />
+                          <React.Fragment key={"msg-group-" + index}>
+                            <div ref={scrollToBottomRef}></div>
+                            <Message key={message.id} {...message} />
+                          </React.Fragment>
                         </>
                       );
                     }
@@ -477,9 +570,10 @@ export const ChatbotDemo3: FunctionComponent = () => {
               </ChatbotContent>
               <ChatbotFooter>
                 <MessageBar
-                  onSendMessage={handleSend}
+                  onSendMessage={(event) => { handleSend(event as string) }}
                   hasMicrophoneButton
                   isSendButtonDisabled={isSendButtonDisabled}
+                  handleAttach={handleFileUpload}
                 />
                 <ChatbotFootnote {...footnoteProps} />
               </ChatbotFooter>

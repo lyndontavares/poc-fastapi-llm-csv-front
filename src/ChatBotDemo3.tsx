@@ -96,7 +96,8 @@ export default MessageLoading;
 // The timestamps re-render with them.
 const date = new Date();
 
-interface InitProps {
+
+/* interface InitProps {
     [key: string]: string | number | boolean;
 }
 const initProps: InitProps = {
@@ -107,11 +108,11 @@ const initProps: InitProps = {
   umamiHostUrl: 'http://localhost:3000', // TODO where is your Umami installation?
   console: true,
   something: 'test'
-};
+}; */
 
-const tracking = getTrackingProviders(initProps);
+/* const tracking = getTrackingProviders(initProps);
 tracking.identify('user-123'); // , { superUser: true } TODO get real user id + properties
-tracking.trackPageView(window.location.href);
+tracking.trackPageView(window.location.href); */
 
 const actionEventName = 'MessageAction';
 const initialMessages: MessageProps[] = [
@@ -131,13 +132,13 @@ const initialMessages: MessageProps[] = [
     name: 'Bot',
     avatar: patternflyAvatar,
     timestamp: date.toLocaleString(),
-    actions: {
+    /* actions: {
       positive: { onClick: () => tracking.trackSingleItem(actionEventName, { response: 'Good response' }) },
       negative: { onClick: () => tracking.trackSingleItem(actionEventName, { response: 'Bad response' }) },
       copy: { onClick: () => tracking.trackSingleItem(actionEventName, { response: 'Copy' }) },
       download: { onClick: () => tracking.trackSingleItem(actionEventName, { response: 'Download' }) },
       listen: { onClick: () => tracking.trackSingleItem(actionEventName, { response: 'Listen' }) }
-    }
+    } */
   }
 ];
 

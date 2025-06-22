@@ -6,14 +6,8 @@ import { ChatbotDemo3 } from './ChatBotDemo3';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
      <ChatbotDemo3 />
-    {/*
-    <App />
-    <ChatbotDemo />
-    <ChatbotDemo2 />  */}
-  </StrictMode>,
+  </StrictMode>
 )
-
- 
 
 //https://www.svgrepo.com/svg/448936/assistant
 //https://www.patternfly.org/patternfly-ai/chatbot/overview/demo/basic-chatbot/

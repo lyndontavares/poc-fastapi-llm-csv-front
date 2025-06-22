@@ -2,6 +2,8 @@
 
 POC Frontend React para integração com API Fastapi Gemini usando LangChain CSV
 
+backend: https://github.com/lyndontavares/poc-fastapi-llm-csv-back
+
 ## Objetivo da Atividade
 
 A atividade tem por objetivo criar um ou mais agentes que tornem possível a um usuário realizar perguntas sobre os arquivos CSV disponibilizados.

@@ -59,7 +59,19 @@ const footnoteProps = {
   }
 };
 
-const markdown = `Um parágrafo com *ênfase* e **forte importância**.
+const markdown = 
+`A atividade tem por objetivo criar um ou mais agentes que tornem possível a um usuário realizar perguntas sobre os arquivos CSV disponibilizados.
+Perguntas:
+- Quantas notas ficais foram emitidas?
+- Qual o valor médio dos itens das notas fiscais emitidas na cidade de São Paulo?
+- Qual a UF que teve o maior valor total emitido? 
+- Retorne as 3 UF com a maior quantidade de notas fiscais emitidas juntamente com os valores de total de quantidade, soma do valor total e menor valor de nota fiscal.
+- Qual destinatário teve o maior montante de notas fiscais emitidas juntamente com o valor?
+
+> Dica: hashtag #sql: o agente irá fazer uma consulta SQL. 
+
+`
+const markdown2 = `Um parágrafo com *ênfase* e **forte importância**.
 
 > Uma citação em bloco com ~riscado~ e uma URL: https://reactjs.org.
 
@@ -109,7 +121,7 @@ const initialMessages: MessageProps[] = [
   {
     id: '1',
     role: 'user',
-    content: 'Olá, você pode me dar um exemplo do que você pode fazer?',
+    content: 'Olá, você pode me dar exemplo perguntas para o 1º trabalho da I2A2?',
     name: 'User',
     avatar: userAvatar,
     timestamp: date.toLocaleString(),
@@ -258,21 +270,40 @@ export const ChatbotDemo3: FunctionComponent = () => {
 
 
   async function fettchResponseCSV(message: string) {
-    //setLoading(true);
+
     let retorno = '';
+    const sql = message.toLowerCase().includes('sql');
+    const url = sql ? 'upload_csv_batch_and_query_with_sql_agent' : 'upload_zip_and_query_with_pandas_agent'
+
     try {
 
-
       const payload = new FormData();
-      payload.append('file', filesToUpload[0]);
+      if (sql) {
+
+        // o método append do FormData geralmente não sabe como serializar um array de forma que o FastAPI 
+        // interprete como list[UploadFile].
+        //Quando você envia vários arquivos com FormData, você precisa anexar cada arquivo individualmente
+        // com o mesmo nome de campo.
+
+        if (filesToUpload && filesToUpload.length > 0) {
+          for (let i = 0; i < filesToUpload.length; i++) {
+            payload.append('files', filesToUpload[i]);
+          }
+        }
+
+
+      } else[
+        payload.append('file', filesToUpload[0])
+      ]
       payload.append('question', message);
 
       console.log('question:', message);
-      console.log('Files to upload:', filesToUpload[0]);
+      console.log('files:', filesToUpload);
 
       //const payload = JSON.stringify({ file: filesToUpload[0], question: message });
 
-      const resposta = await fetch('http://127.0.0.1:8000/upload_zip_and_query_with_pandas_agent', {
+
+      const resposta = await fetch(`http://127.0.0.1:8000/${url}`, {
         method: 'POST',
         body: payload,
       })
@@ -546,7 +577,7 @@ export const ChatbotDemo3: FunctionComponent = () => {
                     key='chatbot-welcome-prompt'
                     title="Bem-vindo ao ChatBot MetaMind!"
                     description="I2A2 - Agentes Autonômicos Inteligentes"
-                    /* prompts={welcomePrompts} */
+                  /* prompts={welcomePrompts} */
                   />
                   {/* This code block enables scrolling to the top of the last message.
                   You can instead choose to move the div with scrollToBottomRef on it below
